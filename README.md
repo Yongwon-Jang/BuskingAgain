@@ -1,125 +1,154 @@
-# 버스킹 어게인(비대면 버스킹 플랫폼)
+<div align="center">
 
-## 목차
+# 🎤 버스킹 어게인 (Busking Again)
 
-- [프로젝트 룰](#프로젝트-룰)   
-- [프로젝트 소개](#프로젝트-소개)   
-- [프로젝트 명세](#프로젝트-명세)
-  - [배포 환경](#배포-환경)
-  - [개발 환경](#개발-환경)
-  - [Design Resources](#design-resources)
-  - [핵심 라이브러리](#핵심-라이브러리)
-<br>
+**WebRTC 기반 비대면 버스킹 플랫폼**
 
-## 프로젝트 룰
-- commit
-    - 이름 + 날짜 + 수정 내용
+거리에 설 수 없게 된 아티스트와 관객을, 온라인 버스킹 무대로 다시 연결합니다.
 
-        ex) 권현지 210719 controller수정
+`SSAFY 5기 2학기 공통 프로젝트` · `2021.07 ~ 2021.08 (6주)` · `5인 팀 (FE 2 · BE 3)`
 
-    - 인당 1회 이상 커밋, 매일 아침 front, back merge
-    - 커밋과 머지는 되도록이면 자주, 공통된 부분을 수정하게 되면 커밋하기전 상의 필수
-- Jira
-    - 제목 : [BE] or [FE] + 공백한칸 + 제목
-    - 레이블 : BE or FE로 설정
-    - 개인이 맡은 역할을 개인이 관리 (Story Point, 하위 테스크 등)
-- Rest API
-    - URI : /카테고리
-        - 생성(POST) : /create
-        - 조회(GET) : /{조회할 대상의 id}
-        - 수정(PATCH) : /{수정할 대상의 id}
-        - 삭제(DELETE) : /{수정할 대상의 id}
-    - 로그인 이후의 동작은 모두 Request Header에 토큰必
-    - 그 외의 동작들은 BE, FE 상의 후 문서에 기록
-    - 링크 : [https://docs.google.com/spreadsheets/d/1mzfuLOyo3YoIcw-sFde7B8qAV8niRF7DVuSjcf4mflQ/edit#gid=0](https://docs.google.com/spreadsheets/d/1mzfuLOyo3YoIcw-sFde7B8qAV8niRF7DVuSjcf4mflQ/edit#gid=0)
-<br>
+![Vue.js](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)
+![Vuex](https://img.shields.io/badge/Vuex-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)
+![WebRTC](https://img.shields.io/badge/WebRTC-333333?style=flat-square&logo=webrtc&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![Jira](https://img.shields.io/badge/Jira-0052CC?style=flat-square&logo=jira&logoColor=white)
 
-## 프로젝트 소개
-Web RTC를 이용한 웹 기반 비대면 버스킹 서비스
-<br>
+</div>
 
-- 와이어 프레임 : https://www.figma.com/file/95aVyXNvebpb04nO8lXGSb/Project-1?node-id=0%3A1
-- 핵심 기능
-    - 회원 가입 / 회원 정보 관리
-    - 로그인 / 로그아웃
-    - 선호하는 장르 팔로우
-    - 버스킹 생성
-    - 버스킹 목록 조회 (일반, 랜덤, 선호하는 장르)
-    - 채팅
-    - 등
-- 차별성
-    - 버스킹 시작을 위한 진입장벽을 낮추기 (초기 비용 절감)
-    - 관객들의 반응을 실시간으로 확인 가능한 양뱡형 소통 (유튜브와의 차별성)
-    - 선호하는 가수가 아닌 장르를 팔로우하여서 본인이 선호하는 장르의 다양한 버스킹을 볼 수 있음
-    - 버스킹의 느낌을 위한 랜덤 목록 불러오기
-## 프로젝트 명세
+---
 
+## 📌 목차
 
-### 배포 환경
-- __URL__ : 
-- __배포 여부__ : O / X
-- __접속 가능__ : 접속 가능 / 수정 중
-- __HTTPS 적용__ : O / X
-- __PORT__ : // 3rd Party에서 사용하는 포트가 있다면 기입해주세요. <- 기입 후 해당 주석 삭제
-<br>
+- [프로젝트 소개](#-프로젝트-소개)
+- [핵심 기능](#-핵심-기능)
+- [기존 서비스와의 차별점](#-기존-서비스와의-차별점)
+- [시스템 아키텍처](#-시스템-아키텍처)
+- [기술 스택](#-기술-스택)
+- [팀 구성과 담당 역할](#-팀-구성과-담당-역할)
+- [협업 방식](#-협업-방식)
+- [회고](#-회고)
 
-### 개발 환경
-#### Front-end
-- __Framework__ : Vue.js
-- __지원 환경__ : Web
-- __담당자__ : 변우석, 장용원
-<br>
+---
 
-#### Back-end
-- __Framework__ : Spring boot
-- __Database__ : MySQL
-- __담당자__ : 권현지, 김은비, 정태현
-<br>
+## 💡 프로젝트 소개
 
-#### Design
-- __Framework 사용__ : O / X
-  - [Vuetify](https://vuetifyjs.com/)
-  - [Element Plus](https://element-plus.org/)
-- __Design Tool 사용__ : Adobe XD, Photoshop, Blender, Zeplin 등 (없을 경우 빈칸)
-- __담당자__ : 팀원 A, 팀원 B,
-<br>
+코로나19로 거리 공연이 어려워지면서 버스커들은 무대를, 관객은 우연히 마주치는 공연의 즐거움을 잃었습니다.
+**버스킹 어게인**은 장비나 공간 없이 브라우저만으로 버스킹을 열고, 관객이 실시간으로 반응하며 함께하는 **양방향 온라인 버스킹 플랫폼**입니다.
 
-### Design Resources
-__외부 템플릿 또는 에셋__ (이미지 또는 링크 첨부)
-- 무료 이미지, 아이콘, 폰트 등은 제외
-- [Vue Argon Design System](https://www.creative-tim.com/product/vue-argon-design-system?affiliate_id=116187) (무료)
-  - __사용 기능__ : 디자인 전반 적용
-- [Vue Black Dashboard Pro](https://www.creative-tim.com/product/vue-black-dashboard-pro?affiliate_id=116187) (유료)
-  - __사용 기능__ : 캘린더 컴포넌트 사용
-<br>
+- 와이어프레임: [Figma](https://www.figma.com/file/95aVyXNvebpb04nO8lXGSb/Project-1?node-id=0%3A1)
 
-__자체 제작 산출물__ (필요시 이미지 또는 설명 첨부)
-- LOGO
-- CardView
-- Button
-- Calendar
-<br>
+---
 
-### 핵심 라이브러리
-기본 제공하는 라이브러리 외 핵심 기능 구현에 사용한 라이브러리가 있다면 작성해주세요.   
-예시 ) VR/AR 라이브러리, 애니메이션 라이브러리, 텍스트/사진/동영상 지원, 편집 라이브러리 등
+## ✨ 핵심 기능
 
-- __AR CORE__
-  - __링크__ : https://developers.google.com/ar
-  - __소개__ : 구글에서 제공하는 AR 지원 라이브러리
-  - __사용 기능__ : 이미지 인식, 이미지 위 영상 표시
-  - __담당자__ : 팀원 A, 
+| 기능 | 설명 |
+|---|---|
+| **회원 관리** | 회원가입, 로그인/로그아웃(토큰 기반 인증), 회원 정보 수정 |
+| **버스킹 생성** | 아티스트가 제목·장르·소개를 입력해 공연방을 열고 WebRTC로 실시간 방송 시작 |
+| **버스킹 시청** | 관객이 공연방에 입장해 실시간 영상·음성 시청 |
+| **실시간 채팅** | 공연 중 아티스트와 관객이 채팅으로 소통 |
+| **버스킹 목록** | 전체 목록, **랜덤** 목록, **선호 장르** 목록 3가지 방식으로 탐색 |
+| **장르 팔로우** | 특정 가수가 아닌 장르를 팔로우해 취향에 맞는 공연을 추천받음 |
 
-- __COLOR THIEF__
-  - __링크__ : https://lokeshdhakar.com/projects/color-thief/
-  - __소개__ : 이미지에서 색상을 추출해주는 라이브러리
-  - __사용 기능__ : 커버 사진에서 색상 추출 -> 배경 색상 변경
-  - __담당자__ : 팀원 A,
+---
 
-- __Animate.css__
-  - __링크__ : https://animate.style/
-  - __소개__ : css 애니메이션 지원 라이브러리
-  - __사용 기능__ : 메인 페이지 진입 시 애니메이션 사용
-  - __담당자__ : 팀원 A,
+## 🎯 기존 서비스와의 차별점
 
+- **낮은 진입장벽** — 별도 장비·송출 프로그램 없이 웹 브라우저만으로 공연 시작
+- **양방향 소통** — 단방향 스트리밍과 달리 관객 반응을 공연자가 실시간으로 확인
+- **장르 팔로우** — 이미 아는 가수가 아니라 좋아하는 장르의 새로운 버스커를 발견
+- **랜덤 목록** — 길을 걷다 우연히 공연을 만나는 버스킹 특유의 경험을 재현
 
+---
+
+## 🏗 시스템 아키텍처
+
+```mermaid
+flowchart LR
+    subgraph Client["Client (Browser)"]
+        A[Artist<br/>Vue.js SPA] 
+        V[Viewer<br/>Vue.js SPA]
+    end
+
+    subgraph Server["Server"]
+        API[Spring Boot<br/>REST API]
+        DB[(MySQL)]
+        MS[WebRTC<br/>Media Server]
+    end
+
+    A -- "REST (JWT)" --> API
+    V -- "REST (JWT)" --> API
+    API --> DB
+    A -- "영상·음성 송출" --> MS
+    MS -- "스트림 전달" --> V
+    A <-. "채팅" .-> MS
+    V <-. "채팅" .-> MS
+```
+
+---
+
+## 🛠 기술 스택
+
+| 구분 | 기술 |
+|---|---|
+| **Frontend** | Vue.js, Vuex, Vue Router, Axios |
+| **Realtime** | WebRTC |
+| **Backend** | Spring Boot, Spring Data JPA |
+| **Database** | MySQL |
+| **UI** | Vue Argon Design System, Element Plus |
+| **Collaboration** | Git, Jira, Figma, Google Sheets(API 명세) |
+
+---
+
+## 👥 팀 구성과 담당 역할
+
+| 이름 | 역할 |
+|---|---|
+| **장용원** | **Frontend** |
+| 변우석 | Frontend |
+| 권현지 | Backend |
+| 김은비 | Backend |
+| 정태현 | Backend |
+
+### 내가 담당한 부분 (Frontend · 장용원)
+
+- Vue.js 기반 SPA 화면 구현 및 Vue Router 라우팅 구성
+- Vuex로 로그인 토큰·사용자 정보·공연방 상태 관리
+- Axios 공통 인스턴스로 REST API 연동, 로그인 이후 요청 헤더에 토큰 자동 첨부
+- WebRTC 공연방 화면(방송 시작·시청)과 실시간 채팅 UI 구현
+- 버스킹 목록(전체·랜덤·선호 장르) 화면과 장르 팔로우 UI 구현
+
+---
+
+## 🤝 협업 방식
+
+**Git 컨벤션**
+- 커밋 메시지: `이름 + 날짜 + 수정 내용` (예: `장용원 210719 버스킹 목록 화면 추가`)
+- 1인 1일 1커밋 이상, 매일 아침 FE·BE 브랜치 merge
+- 공통 영역 수정 시 커밋 전 팀원과 사전 협의
+
+**Jira**
+- 이슈 제목: `[FE]` / `[BE]` + 제목, 레이블로 파트 구분
+- 개인이 담당 이슈의 Story Point·하위 태스크를 직접 관리
+
+**REST API 규칙**
+
+| 동작 | Method | URI |
+|---|---|---|
+| 생성 | `POST` | `/{카테고리}/create` |
+| 조회 | `GET` | `/{카테고리}/{id}` |
+| 수정 | `PATCH` | `/{카테고리}/{id}` |
+| 삭제 | `DELETE` | `/{카테고리}/{id}` |
+
+- 로그인 이후 모든 요청은 Request Header에 토큰 필수
+- API 명세는 FE·BE 협의 후 공유 문서에 기록
+
+---
+
+## 📝 회고
+
+- **실시간 서비스의 상태 관리** — 공연방 입장·퇴장, 방송 시작·종료처럼 서버와 클라이언트 상태가 계속 바뀌는 화면을 다루며, 상태를 한곳(Vuex)에 모으고 화면은 그 상태를 그리기만 하도록 나누는 것이 중요하다는 것을 배웠습니다.
+- **FE·BE 협업** — API 규칙과 명세 문서를 먼저 합의하고 개발을 시작한 덕분에, 6주라는 짧은 기간에도 연동 과정의 혼선을 줄일 수 있었습니다.
+- **이후의 경험으로 이어진 점** — 이 프로젝트에서 처음 경험한 "실시간·비동기 상태를 어떻게 신뢰할 수 있게 보여줄 것인가"라는 고민은, 이후 재해복구(DR) 복제 오케스트레이션 서비스를 개발하며 상태 조회 정합성을 다루는 일로 이어졌습니다.
