@@ -6,8 +6,8 @@
 const ICE_SERVERS = [{ urls: 'stun:stun.l.google.com:19302' }];
 
 export class BuskingRoom {
-  constructor({ roomId, role, token, onStream, onChat, onViewers, onEnded, onError }) {
-    Object.assign(this, { roomId, role, token, onStream, onChat, onViewers, onEnded, onError });
+  constructor({ roomId, role, token, onStream, onChat, onReaction, onViewers, onEnded, onError }) {
+    Object.assign(this, { roomId, role, token, onStream, onChat, onReaction, onViewers, onEnded, onError });
     this.peers = new Map(); // peerId -> RTCPeerConnection
     this.localStream = null;
     this.ws = null;
@@ -34,6 +34,10 @@ export class BuskingRoom {
     this.send({ type: 'chat', text });
   }
 
+  react(emoji) {
+    this.send({ type: 'reaction', emoji });
+  }
+
   async handle(msg) {
     switch (msg.type) {
       case 'viewer-joined':
@@ -48,6 +52,9 @@ export class BuskingRoom {
         break;
       case 'chat':
         this.onChat?.(msg);
+        break;
+      case 'reaction':
+        this.onReaction?.(msg.emoji);
         break;
       case 'viewers':
         this.onViewers?.(msg.count);
