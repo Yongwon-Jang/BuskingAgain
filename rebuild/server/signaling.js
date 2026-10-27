@@ -6,16 +6,30 @@
 // Client -> server messages
 //   { type: 'join', roomId, token, role: 'artist' | 'viewer' }
 //   { type: 'signal', to, data }      // offer / answer / ice candidate
-//   { type: 'chat', text }
+//   { type: 'chat', text }            // logged-in users only
+//   { type: 'reaction', emoji }       // 👏 ❤️ 🔥 🎵 😂, rate limited
 // Server -> client messages
 //   { type: 'joined', peerId, artistPeerId }
 //   { type: 'viewer-joined', peerId, nickname }
 //   { type: 'viewer-left', peerId }
 //   { type: 'signal', from, data }
 //   { type: 'chat', nickname, text, at }
+//   { type: 'reaction', emoji }
 //   { type: 'viewers', count }
 //   { type: 'ended' }
 //   { type: 'error', message }
+
+export const REACTIONS = ['👏', '❤️', '🔥', '🎵', '😂'];
+const RATE_WINDOW_MS = 1000;
+const MAX_EVENTS_PER_WINDOW = 5;
+
+// Simple per-peer rate limiter so one client cannot flood a room.
+function allow(peer, now = Date.now()) {
+  peer.events = (peer.events ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+  if (peer.events.length >= MAX_EVENTS_PER_WINDOW) return false;
+  peer.events.push(now);
+  return true;
+}
 
 export function createSignaling(wss, store) {
   const rooms = new Map(); // roomId -> { artist: peer|null, viewers: Map<peerId, peer> }
@@ -37,7 +51,7 @@ export function createSignaling(wss, store) {
   };
 
   wss.on('connection', (ws) => {
-    const peer = { id: String(peerSeq++), ws, roomId: null, role: null, nickname: '익명' };
+    const peer = { id: String(peerSeq++), ws, roomId: null, role: null, nickname: '익명', userId: null };
 
     ws.on('message', (raw) => {
       let msg;
@@ -47,7 +61,10 @@ export function createSignaling(wss, store) {
         const busking = store.rawBusking(msg.roomId);
         if (!busking) return send(ws, { type: 'error', message: '종료되었거나 없는 버스킹입니다.' });
         const user = store.userByToken(msg.token);
-        if (user) peer.nickname = user.nickname;
+        if (user) {
+          peer.nickname = user.nickname;
+          peer.userId = user.id;
+        }
 
         const room = roomOf(busking.id);
         peer.roomId = busking.id;
@@ -78,7 +95,13 @@ export function createSignaling(wss, store) {
       }
 
       if (msg.type === 'chat' && typeof msg.text === 'string' && msg.text.trim()) {
-        broadcast(room, { type: 'chat', nickname: peer.nickname, text: msg.text.slice(0, 300), at: new Date().toISOString() });
+        if (!peer.userId) return send(ws, { type: 'error', message: '로그인 후 채팅할 수 있어요.' });
+        if (!allow(peer)) return send(ws, { type: 'error', message: '메시지를 너무 빠르게 보내고 있어요.' });
+        broadcast(room, { type: 'chat', nickname: peer.nickname, text: msg.text.trim().slice(0, 300), at: new Date().toISOString() });
+      }
+
+      if (msg.type === 'reaction' && REACTIONS.includes(msg.emoji) && allow(peer)) {
+        broadcast(room, { type: 'reaction', emoji: msg.emoji });
       }
     });
 
