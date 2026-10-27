@@ -65,6 +65,13 @@ input, select, textarea { padding: 10px; border-radius: 8px; border: 1px solid v
 .hint { color: var(--muted); }
 .error { color: #ff6b6b; }
 
+.reactions-layer { position: absolute; inset: 0; aspect-ratio: 16/9; pointer-events: none; overflow: hidden; }
+.float { position: absolute; bottom: 10%; font-size: 32px; animation: rise 2s ease-out forwards; }
+@keyframes rise { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-260px); opacity: 0; } }
+.reaction-bar { display: flex; gap: 6px; margin-top: 8px; }
+.reaction-bar button { font-size: 20px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); }
+.notice { margin: 0; padding: 0 12px 12px; color: #ffb86b; font-size: 13px; }
+
 @media (max-width: 800px) {
   .room { grid-template-columns: 1fr; }
 }
