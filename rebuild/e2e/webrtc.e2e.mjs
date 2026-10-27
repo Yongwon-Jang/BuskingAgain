@@ -43,8 +43,6 @@ await viewer.click('.reaction-bar button >> nth=0');
 await artist.waitForSelector('.float', { timeout: 5000 });
 console.log('artist saw reaction');
 console.log('viewer count on artist:', await artist.textContent('.stage-info p'));
-await viewer.screenshot({ path: '../docs/viewer.jpg' });
-await artist.screenshot({ path: '../docs/artist.jpg' });
 
 await artist.click('button:has-text("공연 종료")');
 await viewer.waitForSelector('text=공연이 끝났어요', { timeout: 5000 });
