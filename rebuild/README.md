@@ -3,6 +3,10 @@
 > 이 폴더는 2021년 SSAFY 공통 프로젝트 **버스킹 어게인**을 **2026년에 다시 구현한 코드**입니다.
 > 원본 코드는 SSAFY GitLab에 있어 이 저장소에 포함되어 있지 않으며, 핵심 기능과 구조를 기억과 기획 문서를 바탕으로 새로 작성했습니다.
 
+> 📖 파일별 설명·핵심 흐름·예상 면접 질문은 **[docs/CODE_GUIDE.md](docs/CODE_GUIDE.md)** 에 정리했습니다.
+
+![viewer](docs/viewer.jpg)
+
 ## 원본과 달라진 점
 
 | 구분 | 원본 (2021) | 재구현 (2026) |
@@ -18,8 +22,11 @@ rebuild/
 ├── server/                 # REST API + WebRTC 시그널링 + 채팅
 │   ├── index.js            # Express 라우팅 (원본 팀의 REST 규칙: /create, /{id})
 │   ├── store.js            # 회원·장르 팔로우·버스킹 도메인 로직
-│   ├── signaling.js        # offer / answer / ICE 중계, 채팅, 시청자 수
-│   └── store.test.js       # 도메인 규칙 테스트 (node:test)
+│   ├── signaling.js        # offer / answer / ICE 중계, 채팅, 리액션, 시청자 수, 도배 방지
+│   ├── store.test.js       # 도메인 규칙 단위 테스트
+│   └── api.test.js         # 실제 서버 + WebSocket 통합 테스트
+├── e2e/webrtc.e2e.mjs      # 두 브라우저로 실제 영상 연결을 확인하는 E2E 테스트 (Playwright)
+├── docs/                   # 코드 가이드, 스크린샷
 └── frontend/
     └── src/
         ├── api/http.js         # axios 공통 인스턴스 (토큰 자동 첨부, 에러 메시지 통일)
@@ -44,8 +51,8 @@ sequenceDiagram
     V->>S: signal(answer) → A
     S->>A: signal(answer)
     A-->>V: ICE 교환 후 영상·음성 P2P 스트리밍
-    V->>S: chat("앵콜!")
-    S->>A: chat 브로드캐스트
+    V->>S: chat("앵콜!") / reaction(👏)
+    S->>A: chat·reaction 브로드캐스트
 ```
 
 ## 실행 방법
@@ -63,6 +70,9 @@ cd frontend && npm install && npm run dev
 3. 다른 쪽에서 목록의 공연을 눌러 입장하면 영상이 연결되고 채팅을 주고받을 수 있습니다.
 
 ```bash
-# 서버 도메인 테스트
+# 서버 단위 + 통합 테스트 (12개)
 cd server && npm test
+
+# E2E: 서버·프론트를 띄운 상태에서 실행
+cd e2e && npm install && npm test
 ```
