@@ -54,12 +54,16 @@ export function createApp(store = createStore()) {
   return app;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// HTTP + WebSocket on the same port. Returns a promise of the listening server (used by tests too).
+export function startServer(port = process.env.PORT ?? 8080) {
   const store = createStore();
   const server = http.createServer(createApp(store));
   const wss = new WebSocketServer({ server, path: '/ws' });
   createSignaling(wss, store);
+  return new Promise((resolve) => server.listen(port, () => resolve(server)));
+}
 
-  const port = process.env.PORT ?? 8080;
-  server.listen(port, () => console.log(`BuskingAgain server listening on http://localhost:${port}`));
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const server = await startServer();
+  console.log(`BuskingAgain server listening on http://localhost:${server.address().port}`);
 }
