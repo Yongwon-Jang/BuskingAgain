@@ -1,0 +1,7 @@
+{
+  "name": "busking-again-e2e",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node webrtc.e2e.mjs" },
+  "devDependencies": { "playwright": "^1.48.2" }
+}
