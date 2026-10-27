@@ -3,6 +3,12 @@
     <div class="stage">
       <video ref="videoEl" autoplay playsinline :muted="isArtist"></video>
       <div v-if="!hasStream" class="waiting">{{ waitingText }}</div>
+      <div class="reactions-layer">
+        <span v-for="r in floating" :key="r.id" class="float" :style="{ left: r.x + '%' }">{{ r.emoji }}</span>
+      </div>
+      <div class="reaction-bar">
+        <button v-for="e in REACTIONS" :key="e" @click="react(e)">{{ e }}</button>
+      </div>
       <div class="stage-info">
         <span class="genre">{{ busking.genre }}</span>
         <h2>{{ busking.title }}</h2>
@@ -21,6 +27,7 @@
                :disabled="!isLoggedIn" maxlength="300" />
         <button class="btn primary" :disabled="!isLoggedIn">전송</button>
       </form>
+      <p v-if="notice" class="notice">{{ notice }}</p>
     </aside>
   </section>
   <p v-else-if="error" class="error">{{ error }}</p>
@@ -46,7 +53,11 @@ const viewerCount = ref(0);
 const messages = ref([]);
 const draft = ref('');
 const chatList = ref(null);
+const floating = ref([]);
+const notice = ref('');
+const REACTIONS = ['👏', '❤️', '🔥', '🎵', '😂'];
 let room = null;
+let floatSeq = 0;
 
 const isLoggedIn = computed(() => store.getters.isLoggedIn);
 const isArtist = computed(() => busking.value && store.state.user?.id === busking.value.artistId);
@@ -73,12 +84,25 @@ onMounted(async () => {
       await nextTick();
       chatList.value?.scrollTo({ top: chatList.value.scrollHeight });
     },
+    onReaction: (emoji) => {
+      const item = { id: ++floatSeq, emoji, x: 10 + Math.random() * 80 };
+      floating.value.push(item);
+      setTimeout(() => (floating.value = floating.value.filter((r) => r.id !== item.id)), 2000);
+    },
     onViewers: (n) => (viewerCount.value = n),
     onEnded: () => {
       ended.value = true;
       hasStream.value = false;
     },
-    onError: (m) => (error.value = m),
+    onError: (m) => {
+      // chat/rate-limit errors are shown briefly; join errors replace the page
+      if (hasStream.value || !isArtist.value) {
+        notice.value = m;
+        setTimeout(() => (notice.value = ''), 2500);
+      } else {
+        error.value = m;
+      }
+    },
   });
 
   try {
@@ -94,6 +118,10 @@ function sendChat() {
   if (!draft.value.trim()) return;
   room.chat(draft.value);
   draft.value = '';
+}
+
+function react(emoji) {
+  room?.react(emoji);
 }
 
 async function end() {
