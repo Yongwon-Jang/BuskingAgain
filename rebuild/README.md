@@ -5,8 +5,6 @@
 
 > 📖 파일별 설명·핵심 흐름·예상 면접 질문은 **[docs/CODE_GUIDE.md](docs/CODE_GUIDE.md)** 에 정리했습니다.
 
-![viewer](docs/viewer.jpg)
-
 ## 원본과 달라진 점
 
 | 구분 | 원본 (2021) | 재구현 (2026) |
